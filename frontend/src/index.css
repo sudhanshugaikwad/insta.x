@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { margin: 0; background: #fff7f2; color: #1c1917; font-family: "DM Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+  button, input, textarea { font: inherit; }
+}
+
+@layer components {
+  .nav-item { @apply flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-ink transition hover:bg-stone-100; }
+  .field { @apply w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition placeholder:text-stone-400 focus:border-coral focus:bg-white focus:ring-2 focus:ring-coral/20; }
+}
