@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { request } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
-
+const API_URL = process.env.REACT_APP_API_URL;
 export default function AuthPage({ mode }) {
   const signup = mode === "signup";
   const [form, setForm] = useState({
@@ -21,37 +21,82 @@ export default function AuthPage({ mode }) {
     setForm({ ...form, [event.target.name]: event.target.value });
   };
 
-  const submit = async (event) => {
-    event.preventDefault();
-    if (
-      (signup && (!form.name.trim() || !form.userName.trim())) ||
-      !form.email.trim() ||
-      !form.password
-    ) {
-      toast.error("Please complete all fields");
-      return;
-    }
+  // const submit = async (event) => {
+  //   event.preventDefault();
+  //   if (
+  //     (signup && (!form.name.trim() || !form.userName.trim())) ||
+  //     !form.email.trim() ||
+  //     !form.password
+  //   ) {
+  //     toast.error("Please complete all fields");
+  //     return;
+  //   }
 
-    setLoading(true);
-    try {
-      const data = await request(signup ? "https://insta-x-backend.onrender.com/signup" : "https://insta-x-backend.onrender.com/signin", {
+  //   setLoading(true);
+  //   try {
+  //     const data = await request(signup ? "https://insta-x-backend.onrender.com/signup" : "https://insta-x-backend.onrender.com/signin", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(form),
+  //     });
+  //     if (signup) {
+  //       toast.success(data.message);
+  //       navigate("/signin");
+  //     } else {
+  //       login(data.user, data.token);
+  //       navigate(location.state?.from?.pathname || "/home", { replace: true });
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+
+const submit = async (event) => {
+  event.preventDefault();
+
+  if (
+    (signup && (!form.name.trim() || !form.userName.trim())) ||
+    !form.email.trim() ||
+    !form.password
+  ) {
+    toast.error("Please complete all fields");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const data = await request(
+      signup
+        ? `${API_URL}/signup`
+        : `${API_URL}/signin`,
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-      });
-      if (signup) {
-        toast.success(data.message);
-        navigate("/signin");
-      } else {
-        login(data.user, data.token);
-        navigate(location.state?.from?.pathname || "/home", { replace: true });
       }
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
+    );
+
+    if (signup) {
+      toast.success(data.message);
+      navigate("/signin");
+    } else {
+      login(data.user, data.token);
+      navigate(location.state?.from?.pathname || "/home", {
+        replace: true,
+      });
     }
-  };
+  } catch (error) {
+    toast.error(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="relative grid min-h-[calc(100vh-4rem)] place-items-center overflow-hidden px-4 py-8 sm:px-6 lg:py-12">
