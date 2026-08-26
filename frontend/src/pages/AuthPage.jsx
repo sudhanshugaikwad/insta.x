@@ -34,7 +34,7 @@ export default function AuthPage({ mode }) {
 
     setLoading(true);
     try {
-      const data = await request(signup ? "/signup" : "/signin", {
+      const data = await request(signup ? "https://insta-x-backend.onrender.com/signup" : "https://insta-x-backend.onrender.com/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
