@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const requirelogin = require("../middelware/requirelogin");
-
 const USER = mongoose.model("USER");
 const POST = mongoose.model("POST");
 

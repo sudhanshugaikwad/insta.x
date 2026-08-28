@@ -33,7 +33,7 @@
       <h6>Technical Details</h6>
    </li>
       <li>
-Frontend: Built with React, styled using CSS and Bootstrap.
+Frontend: Built with React, styled using Tailwind CSS.
    </li>
       <li>
 Routing: Handled by react-router-dom.
@@ -119,7 +119,7 @@ HTTP Requests: Managed with fetch API for interacting with the backend server.
         <p>Logout Your Account</p>
       </div>
     </div>
-
-
+Build Command : npm install && npm run build
+Publish Directory : build
 
 

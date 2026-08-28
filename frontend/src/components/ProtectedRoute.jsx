@@ -4,5 +4,9 @@ import { useAuth } from "../context/AuthContext";
 export default function ProtectedRoute() {
   const { user } = useAuth();
   const location = useLocation();
-  return user && localStorage.getItem("jwt") ? <Outlet /> : <Navigate to="/signin" replace state={{ from: location }} />;
+  return user && localStorage.getItem("jwt") ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/signin" replace state={{ from: location }} />
+  );
 }

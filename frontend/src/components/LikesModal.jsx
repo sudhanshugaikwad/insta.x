@@ -19,7 +19,7 @@ export default function LikesModal({ likes = [], onClose }) {
       document.body.style.overflow = "unset";
     };
   }, []);
-
+// console.log("likes data →", likes);
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       {/* Backdrop */}
@@ -77,6 +77,8 @@ export default function LikesModal({ likes = [], onClose }) {
                   </Link>
                 </li>
               ))}
+
+            
             </ul>
           )}
         </div>
