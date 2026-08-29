@@ -10,7 +10,7 @@ insta.X is a modern Instagram-style social media web application built with Reac
 
 **Developer:** Sudhanshu Gaikwad  
 **Portfolio:** [Sudhanshu Gaikwad](https://sudhanshugaikwad.netlify.app/)  
-**Live preview:** [insta.x](https://instagramwebapp.onrender.com)
+**Live preview:** [insta.x](https://insta-x-sg.onrender.com/)
 
 ---
 
