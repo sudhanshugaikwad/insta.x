@@ -192,10 +192,10 @@ export default function ExplorePage() {
                         <img
                           src={suggestedUser.Photo || "/avatar.png"}
                           alt={suggestedUser.name}
-                          className="mx-auto mb-4 h-16 w-16 rounded-full object-cover ring-4 ring-pink-100 dark:ring-slate-800"
+                          className="mx-auto mb-4 h-16 w-16 rounded-full object-cover ring-4 ring-pink-100"
                         />
                       </button>
-                      <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+                      <h3 className="text-base font-semibold text-slate-900 dark:text-black">
                         {suggestedUser.name}
                       </h3>
                       <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">@{suggestedUser.userName}</p>

@@ -28,11 +28,11 @@
 
 @layer components {
   .nav-item {
-    @apply flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-slate-800;
+    @apply flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-slate-300;
   }
 
   .field {
-    @apply w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-pink-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-pink-500/20;
+    @apply w-full rounded-xl border border-slate-200 dark:border-slate-950 bg-white dark:bg-slate-50 px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-pink-900 focus:bg-white focus:ring-2 focus:ring-pink-500/20;
   }
 
   /* Responsive container */
@@ -49,6 +49,30 @@
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Force a clean white/black theme across the app */
+body,
+main,
+header,
+nav,
+section,
+article,
+aside,
+footer,
+#root,
+[class*="bg-slate-950"],
+[class*="bg-slate-900"],
+[class*="bg-slate-800"],
+[class*="bg-slate-700"],
+[class*="dark:bg-slate"],
+[class*="dark:hover:bg-slate"],
+[class*="dark:border-slate"],
+[class*="dark:text-slate"],
+[class*="dark:hover:text-slate"] {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border-color: #e5e7eb !important;
 }
 
 /* Toast styling to match the InstaX design system */

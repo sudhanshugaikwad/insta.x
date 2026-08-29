@@ -159,11 +159,11 @@ export default function WelcomePage() {
               <div className="absolute -left-8 top-8 h-24 w-24 rounded-full bg-pink-200/60 blur-3xl sm:h-28 sm:w-28 md:h-32 md:w-32" />
               <div className="absolute -right-6 bottom-8 h-24 w-24 rounded-full bg-orange-200/60 blur-3xl sm:h-28 sm:w-28 md:h-32 md:w-32" />
 
-              <div className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 p-3 text-white shadow-[0_35px_80px_-32px_rgba(15,23,42,0.8)] sm:rounded-[30px] sm:p-4 lg:min-h-[460px] xl:min-h-[520px]">
-                <div className="h-full rounded-[22px] bg-gradient-to-br from-slate-900 via-slate-800 to-pink-900 p-4 sm:p-5 lg:p-6">
+              <div className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white p-3 text-slate-900 shadow-[0_35px_80px_-32px_rgba(15,23,42,0.2)] sm:rounded-[30px] sm:p-4 lg:min-h-[460px] xl:min-h-[520px]">
+                <div className="h-full rounded-[22px] border border-slate-200 bg-white p-4 sm:p-5 lg:p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-orange-400 text-sm font-bold text-white">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
                         SG
                       </div>
                       <div>
@@ -286,7 +286,7 @@ export default function WelcomePage() {
         </section>
 
         <section className="mt-14 sm:mt-20">
-          <div className="rounded-[24px] bg-slate-900 px-4 py-6 text-white shadow-[0_30px_80px_-25px_rgba(15,23,42,0.7)] sm:rounded-[32px] sm:px-8 sm:py-8 lg:px-10">
+          <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-6 text-slate-900 shadow-[0_20px_60px_-25px_rgba(15,23,42,0.1)] sm:rounded-[32px] sm:px-8 sm:py-8 lg:px-10">
             <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
                 <div className="mb-4 flex items-center gap-3">

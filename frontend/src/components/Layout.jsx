@@ -8,8 +8,8 @@ export default function Layout({ children }) {
   return (
     <>
       {!hideNavbar && <Navbar />}
-      <main className={`min-h-screen bg-[#f8fafc] pb-24 md:pb-0 ${hideNavbar ? "pt-0" : "pt-16"}`}>
-        <div className="w-full bg-[#f8fafc]">
+      <main className={`min-h-screen bg-white pb-24 md:pb-0 ${hideNavbar ? "pt-0" : "pt-16"}`}>
+        <div className="w-full bg-white">
           {children}
         </div>
       </main>

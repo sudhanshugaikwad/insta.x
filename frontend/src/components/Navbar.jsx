@@ -63,11 +63,11 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Link
             to={user ? "/home" : "/"}
-            className="flex flex-shrink-0 items-center gap-2 text-slate-900 dark:text-white"
+            className="flex flex-shrink-0 items-center gap-2 text-slate-900"
           >
             <img
               src="/insta02.png"
@@ -164,7 +164,7 @@ export default function Navbar() {
               </NavLink>
               <button
                 onClick={signOut}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 md:hidden"
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-red-600 transition-colors hover:bg-red-50 md:hidden"
               >
                 <LogOut size={18} />
                 Log out
@@ -204,7 +204,7 @@ export default function Navbar() {
             {!user && (
               <Link
                 to="/signin"
-                className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+                className="rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
               >
                 Sign in
               </Link>
@@ -222,7 +222,7 @@ export default function Navbar() {
                 </button>
                 <button
                   type="button"
-                  className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 md:hidden"
+                  className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 md:hidden"
                   onClick={() => setOpen(!open)}
                   aria-label="Toggle menu"
                   aria-expanded={open}
