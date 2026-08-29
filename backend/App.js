@@ -17,11 +17,22 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    "https://insta-x-7xa9.onrender.com",
-    "http://localhost:3000",
-    "http://localhost:3001"
-  ],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      "https://insta-x-sg.onrender.com",
+      "http://localhost:3000",
+      
+    ];
+
+    const isRenderFrontend = origin && /https:\/\/.*\.onrender\.com$/i.test(origin);
+
+    if (!origin || allowedOrigins.includes(origin) || isRenderFrontend) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
