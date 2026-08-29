@@ -66,7 +66,7 @@ const SearchUsers = () => {
       </div>
 
       {showResults && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg z-10">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg z-10">
           {loading && <div className="p-4 text-center text-sm text-gray-500">Searching...</div>}
           {!loading && searchResults.length === 0 && searchQuery && (
             <div className="p-4 text-center text-sm text-gray-500">No users found</div>

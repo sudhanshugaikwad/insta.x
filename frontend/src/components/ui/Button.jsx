@@ -9,9 +9,9 @@ const buttonVariants = cva(
       variant: {
         default: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm hover:from-pink-600 hover:to-rose-600',
         destructive: 'bg-red-500 text-white hover:bg-red-600',
-        outline: 'border border-pink-200 bg-white text-slate-700 hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800',
-        secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700',
-        ghost: 'text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-slate-800',
+        outline: 'border border-pink-200 bg-white text-slate-700 hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700',
+        secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200',
+        ghost: 'text-slate-700 hover:bg-slate-100 hover:text-slate-900',
         link: 'text-pink-600 underline-offset-4 hover:underline dark:text-pink-400',
       },
       size: {

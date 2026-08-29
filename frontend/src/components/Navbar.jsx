@@ -86,7 +86,7 @@ export default function Navbar() {
           )}
 
           {user && (
-            <nav className={`${open ? "absolute left-0 right-0 top-16 flex" : "hidden"} md:top-0 w-full md:w-auto flex-col gap-1 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 md:static md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:dark:bg-transparent md:p-0 md:gap-2`}>
+            <nav className={`${open ? "absolute left-0 right-0 top-16 flex" : "hidden"} md:top-0 w-full md:w-auto flex-col gap-1 border-b border-slate-200 bg-white p-4 md:static md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0 md:gap-2`}>
               <NavLink
                 onClick={close}
                 to="/home"
