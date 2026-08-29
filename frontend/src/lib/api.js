@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const API_URL = process.env.REACT_APP_API_URL || "https://instax-backend-rntn.onrender.com";
 // console.log("API URL →", process.env.REACT_APP_API_URL);
 
 

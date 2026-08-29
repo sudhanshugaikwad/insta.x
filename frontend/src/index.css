@@ -39,6 +39,89 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Toast styling to match the InstaX design system */
+.Toastify__toast-container {
+  width: min(360px, calc(100vw - 1.5rem));
+  padding: 0;
+}
+
+.Toastify__toast {
+  border-radius: 18px !important;
+  border: 1px solid rgba(15, 23, 42, 0.06) !important;
+  box-shadow: 0 20px 45px -22px rgba(15, 23, 42, 0.28) !important;
+  font-family: "DM Sans", sans-serif;
+  padding: 0.85rem 1rem !important;
+}
+
+.Toastify__toast-body {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.Toastify__toast-icon {
+  width: 20px !important;
+  height: 20px !important;
+  margin-inline-end: 0.75rem !important;
+}
+
+.Toastify__close-button {
+  color: inherit !important;
+  opacity: 0.7;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+.Toastify__progress-bar {
+  height: 4px !important;
+  border-radius: 999px !important;
+}
+
+.Toastify__toast--success {
+  background: linear-gradient(135deg, #ecfdf5 0%, #dcfce7 100%) !important;
+  color: #166534 !important;
+  border-left: 4px solid #10b981 !important;
+}
+
+.Toastify__toast--success .Toastify__progress-bar {
+  background: linear-gradient(90deg, #10b981, #34d399) !important;
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%) !important;
+  color: #9f1239 !important;
+  border-left: 4px solid #f43f5e !important;
+}
+
+.Toastify__toast--error .Toastify__progress-bar {
+  background: linear-gradient(90deg, #f43f5e, #fb7185) !important;
+}
+
+.Toastify__toast--warning {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  color: #92400e !important;
+  border-left: 4px solid #f59e0b !important;
+}
+
+.Toastify__toast--warning .Toastify__progress-bar {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+}
+
+.Toastify__toast--info {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+  color: #1d4ed8 !important;
+  border-left: 4px solid #3b82f6 !important;
+}
+
+.Toastify__toast--info .Toastify__progress-bar {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

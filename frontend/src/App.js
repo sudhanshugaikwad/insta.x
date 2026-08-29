@@ -48,7 +48,17 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Layout>
-        <ToastContainer theme="dark" />
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </BrowserRouter>
     </AuthProvider>
   );
