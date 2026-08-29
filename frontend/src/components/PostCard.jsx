@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getPostComments, commentPost, likePost, unlikePost, deletePost, editPost } from "../lib/api";
 import { toast } from "react-toastify";
-import LikesModal from "./LikesModal"
+import LikesModal from "./LikesModal";
 
 export default function PostCard({ post, onUpdate, onDelete }) {
   const { user } = useAuth();
@@ -216,15 +216,7 @@ export default function PostCard({ post, onUpdate, onDelete }) {
         </div>
       )}
 
-      {/* Caption */}
-      {!editMode && (
-        <div className="px-4 py-3 border-t border-stone-200">
-          <p className="text-sm text-ink">
-            <span className="font-semibold">{post.postedBy?.name}</span>{" "}
-            {post.body}
-          </p>
-        </div>
-      )}
+    
 
       {/* Photos Section */}
       <div className="relative bg-stone-900">
@@ -232,8 +224,8 @@ export default function PostCard({ post, onUpdate, onDelete }) {
           <>
             <img
               src={photos[currentPhotoIndex]}
-              alt={`Post photo ${currentPhotoIndex + 1}`}
-              className="aspect-square h-auto w-full object-cover rounded-xl"
+              alt={`Post image ${currentPhotoIndex + 1}`}
+              className="mx-auto block max-h-[75vh] w-full object-contain"
             />
 
             {/* Navigation */}

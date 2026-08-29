@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Camera, Edit3, Mail, UserRound, Users } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Camera, Edit3, Mail, MessageCircle, UserRound, Users } from "lucide-react";
 import { toast } from "react-toastify";
 import Avatar from "../components/Avatar";
 import PostCard from "../components/PostCard";
@@ -13,11 +13,13 @@ import {
   followUser,
   unfollowUser,
   checkIsFollowing,
+  checkUsernameAvailability,
 } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProfilePage() {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const isOwnProfile = !userId || userId === user?._id;
 
@@ -32,6 +34,11 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState({
+    checking: false,
+    available: null,
+    message: "",
+  });
   const [form, setForm] = useState({
     name: "",
     userName: "",
@@ -86,6 +93,59 @@ export default function ProfilePage() {
     };
   }, [photoPreview]);
 
+  useEffect(() => {
+    if (!editing || !profile) return undefined;
+
+    const username = form.userName.trim();
+    if (!username) {
+      setUsernameStatus({ checking: false, available: null, message: "" });
+      return undefined;
+    }
+
+    if (username === profile.userName) {
+      setUsernameStatus({ checking: false, available: true, message: "This is your current username" });
+      return undefined;
+    }
+
+    if (username.length < 3 || !/^[a-zA-Z0-9._]+$/.test(username)) {
+      setUsernameStatus({
+        checking: false,
+        available: false,
+        message: "Use 3+ characters with letters, numbers, dots, or underscores only",
+      });
+      return undefined;
+    }
+
+    let cancelled = false;
+    setUsernameStatus({ checking: true, available: null, message: "Checking username..." });
+
+    const timer = setTimeout(async () => {
+      try {
+        const result = await checkUsernameAvailability(username, profile._id);
+        if (!cancelled) {
+          setUsernameStatus({
+            checking: false,
+            available: result.available,
+            message: result.message,
+          });
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setUsernameStatus({
+            checking: false,
+            available: false,
+            message: error.message,
+          });
+        }
+      }
+    }, 450);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [editing, form.userName, profile]);
+
   const beginEditing = () => {
     setForm({
       name: profile?.name || "",
@@ -93,6 +153,7 @@ export default function ProfilePage() {
       email: profile?.email || "",
       Photo: profile?.Photo || "",
     });
+    setUsernameStatus({ checking: false, available: true, message: "" });
     setPhotoFile(null);
     setPhotoPreview(profile?.Photo || "");
     setEditing(true);
@@ -139,6 +200,10 @@ export default function ProfilePage() {
       toast.error("Name, username, and email are required");
       return;
     }
+    if (usernameStatus.available === false) {
+      toast.error("Please choose a different username.");
+      return;
+    }
     setSaving(true);
     try {
       const photoUrl = await uploadPhoto();
@@ -161,26 +226,21 @@ export default function ProfilePage() {
     }
   };
 
-  const handleFollow = async () => {
-    try {
-      await followUser(userId);
-      setIsFollowing(true);
-      toast.success("User followed");
-      // Reload profile to get updated follower count
-      const data = await getUserProfile(userId);
-      setProfile(data.user);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+  const handleFollowToggle = async () => {
+    if (!profile?._id) return;
 
-  const handleUnfollow = async () => {
     try {
-      await unfollowUser(userId);
-      setIsFollowing(false);
-      toast.success("User unfollowed");
-      // Reload profile to get updated follower count
-      const data = await getUserProfile(userId);
+      if (isFollowing) {
+        await unfollowUser(profile._id);
+        setIsFollowing(false);
+        toast.success("User unfollowed");
+      } else {
+        await followUser(profile._id);
+        setIsFollowing(true);
+        toast.success("User followed");
+      }
+
+      const data = await getUserProfile(profile._id);
       setProfile(data.user);
     } catch (error) {
       toast.error(error.message);
@@ -230,16 +290,25 @@ export default function ProfilePage() {
                     Edit profile
                   </button>
                 ) : (
-                  <button
-                    onClick={isFollowing ? handleUnfollow : handleFollow}
-                    className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                      isFollowing
-                        ? "border border-stone-300 text-gray-900 hover:border-red-300 hover:text-red-600"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
-                  >
-                    {isFollowing ? "Unfollow" : "Follow"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => navigate(`/messages/${profile._id}`)}
+                      className="inline-flex items-center gap-2 rounded-lg border border-stone-300 px-3 py-2 text-sm font-semibold text-gray-900 transition hover:border-coral hover:text-coral"
+                    >
+                      <MessageCircle size={16} />
+                      Message
+                    </button>
+                    <button
+                      onClick={handleFollowToggle}
+                      className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                        isFollowing
+                          ? "border border-red-200 bg-red-50 text-red-600 hover:border-red-300 hover:bg-red-100"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
+                    >
+                      {isFollowing ? "Unfollow" : "Follow"}
+                    </button>
+                  </div>
                 )}
               </div>
               <p className="mt-1 text-stone-500">@{profile?.userName}</p>
@@ -325,6 +394,19 @@ export default function ProfilePage() {
                     setForm({ ...form, userName: event.target.value })
                   }
                 />
+                {form.userName.trim() && (
+                  <p
+                    className={`mt-2 text-xs ${
+                      usernameStatus.available === false
+                        ? "text-red-500"
+                        : usernameStatus.available === true
+                          ? "text-emerald-600"
+                          : "text-stone-400"
+                    }`}
+                  >
+                    {usernameStatus.checking ? "Checking username..." : usernameStatus.message}
+                  </p>
+                )}
               </label>
               <label className="text-sm font-semibold text-ink sm:col-span-2">
                 Email address
@@ -356,7 +438,7 @@ export default function ProfilePage() {
               </button>
               <button
                 type="submit"
-                disabled={saving}
+                disabled={saving || usernameStatus.checking || usernameStatus.available === false}
                 className="rounded-xl bg-coral px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#df4b38] disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save changes"}

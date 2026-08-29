@@ -29,6 +29,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user",
+        index: true
+    },
+    suspended: {
+        type: Boolean,
+        default: false,
+        index: true
+    },
     followers: [{
         type: ObjectId,
         ref: "USER"

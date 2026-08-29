@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { signup as signupApi, signin as signinApi } from "../lib/api";
+import {
+  signup as signupApi,
+  signin as signinApi,
+  checkUsernameAvailability,
+} from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 
 export default function AuthPage({ mode }) {
@@ -13,54 +18,115 @@ export default function AuthPage({ mode }) {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState({
+    checking: false,
+    available: null,
+    message: "",
+  });
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!signup) {
+      setUsernameStatus({ checking: false, available: null, message: "" });
+      return undefined;
+    }
+
+    const username = form.userName.trim();
+    if (!username) {
+      setUsernameStatus({ checking: false, available: null, message: "" });
+      return undefined;
+    }
+
+    if (username.length < 3 || !/^[a-zA-Z0-9._]+$/.test(username)) {
+      setUsernameStatus({
+        checking: false,
+        available: false,
+        message: "Use 3+ characters with letters, numbers, dots, or underscores only",
+      });
+      return undefined;
+    }
+
+    let cancelled = false;
+    setUsernameStatus({ checking: true, available: null, message: "Checking username..." });
+
+    const timer = setTimeout(async () => {
+      try {
+        const result = await checkUsernameAvailability(username);
+        if (!cancelled) {
+          setUsernameStatus({
+            checking: false,
+            available: result.available,
+            message: result.message,
+          });
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setUsernameStatus({
+            checking: false,
+            available: false,
+            message: error.message,
+          });
+        }
+      }
+    }, 450);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [form.userName, signup]);
 
   const updateField = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value });
   };
 
+  const submit = async (event) => {
+    event.preventDefault();
 
-const submit = async (event) => {
-  event.preventDefault();
-
-  if (
-    (signup && (!form.name.trim() || !form.userName.trim())) ||
-    !form.email.trim() ||
-    !form.password
-  ) {
-    toast.error("Please complete all fields");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    let data;
-
-    if (signup) {
-      data = await signupApi(
-        form.name.trim(),
-        form.userName.trim(),
-        form.email.trim(),
-        form.password
-      );
-      toast.success(data.message);
-      navigate("/signin");
-    } else {
-      data = await signinApi(form.email.trim(), form.password);
-      login(data.user, data.token);
-      navigate(location.state?.from?.pathname || "/home", {
-        replace: true,
-      });
+    if (
+      (signup && (!form.name.trim() || !form.userName.trim())) ||
+      !form.email.trim() ||
+      !form.password
+    ) {
+      toast.error("Please complete all fields");
+      return;
     }
-  } catch (error) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+
+    if (signup && usernameStatus.available === false) {
+      toast.error("Please choose a different username.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      let data;
+
+      if (signup) {
+        data = await signupApi(
+          form.name.trim(),
+          form.userName.trim(),
+          form.email.trim(),
+          form.password
+        );
+        toast.success(data.message);
+        navigate("/signin");
+      } else {
+        data = await signinApi(form.email.trim(), form.password);
+        login(data.user, data.token);
+        navigate(location.state?.from?.pathname || "/home", {
+          replace: true,
+        });
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
 
@@ -70,22 +136,34 @@ const submit = async (event) => {
     <div className="relative grid min-h-[calc(100vh-4rem)] place-items-center overflow-hidden px-4 py-8 sm:px-6 lg:py-12">
       <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-coral/10 blur-3xl" />
       <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-2xl shadow-stone-300/30 sm:grid sm:grid-cols-[.85fr_1.15fr]">
-        <div className="hidden bg-ink p-10 text-white sm:flex sm:flex-col sm:justify-between lg:p-12">
-          <div className="font-display text-3xl font-bold">
-            insta<span className="text-coral">.</span>X
+        <div className="hidden bg-gradient-to-br from-[#1f1d1b] via-[#161514] to-[#1d1a18] p-10 text-white sm:flex sm:flex-col sm:justify-between lg:p-12">
+          <div className="flex items-center gap-3">
+            <img
+              src="/insta02.png"
+              alt="insta.X logo"
+              className="h-14 w-14 rounded-2xl border border-white/10 bg-white/5 object-cover shadow-lg shadow-black/20"
+            />
+            <div className="font-display text-3xl font-bold tracking-tight">
+              insta<span className="text-coral">.</span>X
+            </div>
           </div>
           <div>
             <p className="max-w-xs font-display text-3xl font-semibold leading-tight lg:text-4xl">
               A little closer to the people and moments you love.
             </p>
-            <div className="mt-8 flex items-center gap-2 text-sm text-stone-400">
-              <span className="h-2 w-2 rounded-full bg-coral" />
+            <div className="mt-8 flex items-center gap-2 text-sm text-stone-300">
+              <span className="h-2.5 w-2.5 rounded-full bg-coral shadow-[0_0_12px_rgba(248,110,90,0.8)]" />
               Share what feels real.
             </div>
           </div>
         </div>
         <div className="p-6 sm:p-10 lg:p-14">
-          <div className="mb-8 sm:hidden">
+          <div className="mb-8 flex items-center gap-3 sm:hidden">
+            <img
+              src="/insta02.png"
+              alt="insta.X logo"
+              className="h-11 w-11 rounded-2xl border border-stone-200 bg-stone-50 object-cover"
+            />
             <p className="font-display text-3xl font-bold text-ink">
               insta<span className="text-coral">.</span>X
             </p>
@@ -131,6 +209,19 @@ const submit = async (event) => {
                     value={form.userName}
                     onChange={updateField}
                   />
+                  {form.userName.trim() && (
+                    <p
+                      className={`mt-2 text-xs ${
+                        usernameStatus.available === false
+                          ? "text-red-500"
+                          : usernameStatus.available === true
+                            ? "text-emerald-600"
+                            : "text-stone-400"
+                      }`}
+                    >
+                      {usernameStatus.checking ? "Checking username..." : usernameStatus.message}
+                    </p>
+                  )}
                 </div>
               </>
             )}
@@ -153,17 +244,28 @@ const submit = async (event) => {
               <label className="sr-only" htmlFor="password">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                className="field"
-                type="password"
-                placeholder="Password"
-                minLength={signup ? 8 : undefined}
-                autoComplete={signup ? "new-password" : "current-password"}
-                value={form.password}
-                onChange={updateField}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  className="field pr-11"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  minLength={signup ? 8 : undefined}
+                  autoComplete={signup ? "new-password" : "current-password"}
+                  value={form.password}
+                  onChange={updateField}
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute inset-y-0 right-3 flex items-center text-stone-400 transition hover:text-stone-600"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {signup && (
                 <p className="mt-2 px-1 text-xs text-stone-400">
                   Use at least 8 characters for a stronger password.
@@ -171,8 +273,8 @@ const submit = async (event) => {
               )}
             </div>
             <button
-              disabled={loading}
-              className="w-full rounded-xl bg-coral px-4 py-3.5 font-semibold text-white shadow-lg shadow-coral/20 transition hover:bg-[#df4b38] focus:outline-none focus:ring-2 focus:ring-coral focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+              disabled={loading || (signup && (usernameStatus.checking || usernameStatus.available === false))}
+              className="w-full rounded-xl bg-gradient-to-r from-[#f16c57] via-[#ee5c47] to-[#e6533d] px-4 py-3.5 font-semibold text-white shadow-lg shadow-[#ee5c47]/25 transition duration-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#ee5c47] focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
             >
               {loading
                 ? "Please wait..."
@@ -196,6 +298,15 @@ const submit = async (event) => {
               {signup ? "Sign in" : "Create one"}
             </Link>
           </p>
+
+          {!signup && (
+            <div className="mt-5 border-t border-stone-200 pt-4 text-center text-sm text-stone-500">
+              Need admin access?{" "}
+              <Link className="font-semibold text-coral hover:underline" to="/admin">
+                Admin sign in
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 

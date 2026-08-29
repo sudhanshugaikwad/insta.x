@@ -1,7 +1,7 @@
 const express =require("express")
 const mongoose = require("mongoose");
 const router = express.Router()
-const requirelogin = require("../middelware/requirelogin");
+const requirelogin = require("../middleware/requirelogin");
 const POST = mongoose.model("POST")
 const USER = mongoose.model("USER")
 
@@ -88,29 +88,18 @@ router.get("/post/:postId/comments", requirelogin, async (req, res) => {
 })
 
 
-router.put("/like", requirelogin, async (req, res) => {
-    try {
-        const result = await POST.findByIdAndUpdate(
-            req.body.postId,
-            {
-                $push: { likes: req.user._id }
-            },
-            {
-                new: true
-            }
-        )
-        .populate("postedBy", "_id name userName Photo")
-        .populate("likes", "_id name userName Photo")
-        .populate("comments.postedBy", "_id name userName Photo");
-
-        res.json(result);
-    } catch (err) {
-        return res.status(422).json({ error: err });
-    }
-});
-
 router.put("/unlike", requirelogin, async (req, res) => {
     try {
+        const post = await POST.findById(req.body.postId);
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        // Check if not already liked
+        if (!post.likes.includes(req.user._id)) {
+            return res.status(422).json({ error: "Post not liked yet" });
+        }
+
         const result = await POST.findByIdAndUpdate(
             req.body.postId,
             {
@@ -124,6 +113,58 @@ router.put("/unlike", requirelogin, async (req, res) => {
         .populate("likes", "_id name userName Photo")
         .populate("comments.postedBy", "_id name userName Photo");
 
+        // Delete notification
+        const NOTIFICATION = mongoose.model("NOTIFICATION");
+        await NOTIFICATION.deleteOne({
+            userId: post.postedBy,
+            actorId: req.user._id,
+            type: "like",
+            postId: req.body.postId,
+        });
+
+        res.json(result);
+    } catch (err) {
+        return res.status(422).json({ error: err });
+    }
+});
+
+router.put("/like", requirelogin, async (req, res) => {
+    try {
+        const post = await POST.findById(req.body.postId);
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        // Check if already liked
+        if (post.likes.includes(req.user._id)) {
+            return res.status(422).json({ error: "Post already liked" });
+        }
+
+        const result = await POST.findByIdAndUpdate(
+            req.body.postId,
+            {
+                $push: { likes: req.user._id }
+            },
+            {
+                new: true
+            }
+        )
+        .populate("postedBy", "_id name userName Photo")
+        .populate("likes", "_id name userName Photo")
+        .populate("comments.postedBy", "_id name userName Photo");
+
+        // Create notification if liker is not the post owner
+        if (post.postedBy.toString() !== req.user._id.toString()) {
+            const NOTIFICATION = mongoose.model("NOTIFICATION");
+            await NOTIFICATION.create({
+                userId: post.postedBy,
+                actorId: req.user._id,
+                type: "like",
+                postId: req.body.postId,
+                message: `liked your post`,
+            });
+        }
+
         res.json(result);
     } catch (err) {
         return res.status(422).json({ error: err });
@@ -131,25 +172,43 @@ router.put("/unlike", requirelogin, async (req, res) => {
 });
 
 
-router.put("/comment",requirelogin,(req,res)=>{
-    const comment ={
-        comment:req.body.text,
-        postedBy:req.user._id
+router.put("/comment", requirelogin, async (req, res) => {
+    try {
+        const comment = {
+            comment: req.body.text,
+            postedBy: req.user._id
+        }
+
+        const post = await POST.findById(req.body.postId);
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        const result = await POST.findByIdAndUpdate(req.body.postId, {
+            $push: { comments: comment }
+        }, {
+            new: true
+        })
+        .populate("comments.postedBy", "_id name userName Photo")
+        .populate("postedBy", "_id name userName Photo");
+
+        // Create notification if commenter is not the post owner
+        if (post.postedBy.toString() !== req.user._id.toString()) {
+            const NOTIFICATION = mongoose.model("NOTIFICATION");
+            await NOTIFICATION.create({
+                userId: post.postedBy,
+                actorId: req.user._id,
+                type: "comment",
+                postId: req.body.postId,
+                message: `commented on your post`,
+            });
+        }
+
+        res.json(result);
+    } catch (err) {
+        res.status(422).json({ error: err.message });
     }
-    POST.findByIdAndUpdate(req.body.postId,{
-        $push:{comments:comment}
-    },{
-        new:true
-    })
-    .populate("comments.postedBy","_id name")
-    .populate("postedBy","_id name")
-    .then((result)=>{
-        res.json(result)
-    })
-    .catch((err)=>{
-        res.status(422).json({error:err.message})
-    })
-})
+});
 
 // Edit post - only owner can edit
 router.put("/editPost/:postId", requirelogin, async (req, res) => {

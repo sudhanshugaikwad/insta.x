@@ -23,6 +23,9 @@ module.exports = (req, res, next) => {
         if (!userData) {
           return res.status(401).json({ error: "User no longer exists" });
         }
+        if (userData.suspended) {
+          return res.status(403).json({ error: "This account is suspended" });
+        }
         req.user = userData;
         next();
       })

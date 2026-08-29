@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const requirelogin = require("../middelware/requirelogin");
+const requirelogin = require("../middleware/requirelogin");
 const USER = mongoose.model("USER");
 const POST = mongoose.model("POST");
 
@@ -89,6 +89,15 @@ router.put("/follow", requirelogin, async (req, res) => {
             .populate("followers", "_id name userName Photo")
             .populate("following", "_id name userName Photo");
 
+        // Create follow notification
+        const NOTIFICATION = mongoose.model("NOTIFICATION");
+        await NOTIFICATION.create({
+            userId: followUserId,
+            actorId: req.user._id,
+            type: "follow",
+            message: `started following you`,
+        });
+
         return res.json({ message: "User followed successfully", user: updatedUser });
     } catch (err) {
         console.error("Error following user:", err);
@@ -130,6 +139,14 @@ router.put("/unfollow", requirelogin, async (req, res) => {
         )
             .populate("followers", "_id name userName Photo")
             .populate("following", "_id name userName Photo");
+
+        // Delete follow notification
+        const NOTIFICATION = mongoose.model("NOTIFICATION");
+        await NOTIFICATION.deleteOne({
+            userId: unfollowUserId,
+            actorId: req.user._id,
+            type: "follow",
+        });
 
         return res.json({ message: "User unfollowed successfully", user: updatedUser });
     } catch (err) {
